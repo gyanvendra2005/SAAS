@@ -1,7 +1,6 @@
-import Tenant from "../../../../../../lib/models/tenant.js";
-import { connectDB } from "../../../../../../lib/mongodb.js";
-import { verifyToken } from "../../../../../../lib/auth.js";
-import bcrypt from "bcryptjs";
+import Tenant from "../../../../../lib/models/tenant.js";
+import { connectDB } from "../../../../../lib/mongodb.js";
+import { verifyToken } from "../../../../../lib/auth.js";
 import User from "../../../../../lib/models/user.js";
 
 export async function POST(req, { params }) {
