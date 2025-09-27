@@ -37,6 +37,7 @@ export default function Login() {
       localStorage.setItem("token", d.token);
       localStorage.setItem("tenant_slug", d.tenant.slug);
       localStorage.setItem("role", d.user.role);
+      localStorage.setItem("tenant_plan", d.tenant.plan);
 
       router.push("/notes");
     } catch (error) {
@@ -47,15 +48,15 @@ export default function Login() {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-700">
-      <Card className="w-full max-w-md shadow-lg">
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-gray-700 to-gray-900 p-4">
+      <Card className="w-full max-w-md shadow-2xl border border-gray-800">
         <CardHeader>
-          <CardTitle className="text-center text-2xl">Login</CardTitle>
+          <CardTitle className="text-center text-3xl font-bold text-white">Login</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-6">
           <form onSubmit={submit} className="space-y-4">
             <div>
-              <Label>Email</Label>
+              <Label className="text-gray-200">Email</Label>
               <Input
                 type="email"
                 value={email}
@@ -66,7 +67,7 @@ export default function Login() {
             </div>
 
             <div>
-              <Label>Password</Label>
+              <Label className="text-gray-200">Password</Label>
               <Input
                 type="password"
                 value={password}
@@ -77,15 +78,20 @@ export default function Login() {
             </div>
 
             {err && (
-              <Alert variant="destructive">
+              <Alert variant="destructive" className="mt-2">
                 <AlertCircle className="h-4 w-4" />
                 <AlertDescription>{err}</AlertDescription>
               </Alert>
             )}
 
-            <Button type="submit" className="w-full" disabled={loading}>
+            <Button type="submit" className="w-full mt-2" disabled={loading}>
               {loading ? "Logging in..." : "Login"}
             </Button>
+
+            {/* <p className="text-center text-sm text-gray-400 mt-2">
+              Forgot your password? <a href="#" className="text-indigo-400 hover:underline">Reset</a>
+
+            </p> */}
           </form>
         </CardContent>
       </Card>

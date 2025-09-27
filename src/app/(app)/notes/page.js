@@ -8,6 +8,7 @@ export default function NotesPage() {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
+
   const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
   const tenantSlug = typeof window !== "undefined" ? localStorage.getItem("tenant_slug") : null;
   const role = typeof window !== "undefined" ? localStorage.getItem("role") : null;
@@ -64,7 +65,7 @@ export default function NotesPage() {
 
   async function del(id) {
     try {
-      await fetch(`/api/note/${id}`, { method: "DELETE", headers: { Authorization: "Bearer " + token } });
+      await fetch(`/api/notes/${id}`, { method: "DELETE", headers: { Authorization: "Bearer " + token } });
       setNotes((prev) => prev.filter((n) => n._id !== id));
     } catch (err) {
       setError(err.message || "Delete failed");
@@ -86,68 +87,79 @@ export default function NotesPage() {
       setError(err.message || "Upgrade failed");
     }
   }
+ const tenantPlan = typeof window !== "undefined" ? localStorage.getItem("tenant_plan") : "free";
 
   return (
-    <div className="max-w-3xl mx-auto p-4">
-      <h2 className="text-3xl font-bold mb-4 text-center">Notes</h2>
-      <p className="text-center mb-4">Role: <strong>{role}</strong></p>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-6">
+      <div className="max-w-3xl mx-auto">
+        <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">Notes</h2>
+        <p className="text-center mb-6 text-gray-600">
+          Role: <strong>{role}</strong>
+        </p>
 
-      <form onSubmit={createNote} className="bg-white shadow rounded p-4 mb-6 space-y-3">
-        {error && <p className="text-red-600">{error}</p>}
-        <input
-          className="w-full border rounded px-3 py-2 focus:outline-none focus:ring focus:ring-blue-300"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          placeholder="Title"
-        />
-        <textarea
-          className="w-full border rounded px-3 py-2 focus:outline-none focus:ring focus:ring-blue-300"
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          placeholder="Content"
-        />
-        <button
-          type="submit"
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
-        >
-          Create
-        </button>
-      </form>
-
-      {notes.length >= 3 && (
-        <div className="bg-yellow-100 border-l-4 border-yellow-400 text-yellow-700 p-4 mb-6">
-          <p>You have reached the Free plan limit (3 notes).</p>
-          {role === "admin" ? (
-            <button onClick={upgrade} className="mt-2 bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600">
-              Upgrade to Pro
+        <div className="bg-white shadow-lg rounded-lg p-6 mb-6">
+          <form onSubmit={createNote} className="space-y-4">
+            {error && <p className="text-red-600">{error}</p>}
+            <input
+              className="w-full border text-black rounded px-3 py-2 focus:outline-none focus:ring focus:ring-blue-300"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="Title"
+            />
+            <textarea
+              className="w-full border text-black rounded px-3 py-2 focus:outline-none focus:ring focus:ring-blue-300"
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              placeholder="Content"
+            />
+            <button
+              type="submit"
+              className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition w-full"
+            >
+              Create
             </button>
-          ) : (
-            <p className="mt-2 text-sm">Ask an Admin to upgrade your tenant to Pro.</p>
-          )}
+          </form>
         </div>
-      )}
 
-      {loading ? (
-        <p className="text-center text-gray-500">Loading...</p>
-      ) : (
-        <div className="grid gap-4">
-          {notes.map((n) => (
-            <div key={n._id} className="bg-white shadow rounded p-4">
-              <h3 className="text-xl font-semibold mb-1">{n.title}</h3>
-              <p className="text-gray-700 mb-2">{n.content}</p>
-              <small className="text-gray-400">{new Date(n.createdAt).toLocaleString()}</small>
-              <div className="mt-2">
-                <button
-                  onClick={() => del(n._id)}
-                  className="text-red-500 hover:underline text-sm"
-                >
-                  Delete
-                </button>
+     {notes.length >= 3 && tenantPlan === "free" && (
+  <div className="bg-yellow-100 border-l-4 border-yellow-400 text-yellow-700 p-4 mb-6 rounded">
+    <p>You have reached the Free plan limit (3 notes).</p>
+    {role === "admin" ? (
+      <button
+        onClick={upgrade}
+        className="mt-2 bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600"
+      >
+        Upgrade to Pro
+      </button>
+    ) : (
+      <p className="mt-2 text-sm">Ask an Admin to upgrade your tenant to Pro.</p>
+    )}
+  </div>
+)}
+
+
+        {loading ? (
+          <p className="text-center text-gray-500">Loading...</p>
+        ) : (
+          <div className="grid gap-4">
+            {notes.map((n) => (
+              <div key={n._id} className="bg-white shadow rounded p-4">
+                <h3 className="text-xl text-black font-semibold mb-1">{n.title}</h3>
+                <p className="text-gray-700 mb-2">{n.content}</p>
+                <small className="text-gray-400">{new Date(n.createdAt).toLocaleString()}</small>
+                <div className="mt-2 flex justify-end">
+                  <button
+                    onClick={() => del(n._id)}
+                    className="text-red-500 hover:underline text-sm"
+                  >
+                    Delete
+                  </button>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
-      )}
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
